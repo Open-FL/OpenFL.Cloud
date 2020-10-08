@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Version>0.0.0.1</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\deps\OpenFL\deps\OpenCL.Wrapper\deps\OpenCL\src\OpenCL\OpenCL.NET.csproj" />
+    <ProjectReference Include="..\..\deps\OpenFL\deps\OpenCL.Wrapper\deps\Utility\src\Utility\Utility.csproj" />
+    <ProjectReference Include="..\..\deps\OpenFL\deps\OpenCL.Wrapper\src\OpenCL.Wrapper\OpenCL.Wrapper.csproj" />
+    <ProjectReference Include="..\..\deps\OpenFL\deps\PluginSystem\src\PluginSystem\PluginSystem.csproj" />
+    <ProjectReference Include="..\..\deps\OpenFL\src\OpenFL\OpenFL.csproj" />
+  </ItemGroup>
+
+</Project>
