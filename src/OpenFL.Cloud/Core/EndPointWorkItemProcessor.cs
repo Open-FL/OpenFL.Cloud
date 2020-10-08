@@ -4,17 +4,24 @@ using System.Threading;
 
 namespace OpenFL.Cloud.Core
 {
-    public class EndPointWorkItemProcessor: WorkItemProcessor
+    public class EndPointWorkItemProcessor : WorkItemProcessor
     {
+
+        private readonly ConcurrentQueue<(IEndpoint, EndpointWorkItem)> itemQueue =
+            new ConcurrentQueue<(IEndpoint, EndpointWorkItem)>();
+
+        private readonly int MillisTimeout;
 
         public EndPointWorkItemProcessor(int millisTimeout)
         {
             MillisTimeout = millisTimeout;
         }
-        
-        private int MillisTimeout;
-        private ConcurrentQueue<(IEndpoint, EndpointWorkItem)> itemQueue = new ConcurrentQueue<(IEndpoint, EndpointWorkItem)>();
-        public void Enqueue((IEndpoint, EndpointWorkItem) workItem) => itemQueue.Enqueue(workItem);
+
+        public void Enqueue((IEndpoint, EndpointWorkItem) workItem)
+        {
+            itemQueue.Enqueue(workItem);
+        }
+
         public override void Loop()
         {
             while (!ExitRequested || !itemQueue.IsEmpty)
@@ -23,7 +30,7 @@ namespace OpenFL.Cloud.Core
                 {
                     Thread.Sleep(MillisTimeout);
                 }
-                else if(result.Item2.CheckValid(out string error))
+                else if (result.Item2.CheckValid(out string error))
                 {
                     result.Item1.Process(result.Item2);
                 }

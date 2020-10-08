@@ -6,6 +6,7 @@ namespace OpenFL.Cloud.Core
     {
 
         string EndpointName { get; }
+
         EndpointWorkItem GetItem(HttpListenerContext context);
 
         void Process(EndpointWorkItem item);

@@ -15,7 +15,7 @@ namespace OpenFL.Cloud.Core
 
         void IEndpoint.Process(EndpointWorkItem item)
         {
-            Process((T)item);
+            Process((T) item);
         }
 
         public abstract T GetItem(HttpListenerContext context);

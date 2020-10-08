@@ -6,12 +6,13 @@ using System.Threading;
 
 namespace OpenFL.Cloud.Core
 {
-    public  class EndPointConnectionManager : WorkItemProcessor
+    public class EndPointConnectionManager : WorkItemProcessor
     {
 
-        private int MillisTimeout;
         private readonly IEndpoint[] Endpoints;
         private readonly EndPointWorkItemProcessor Processor;
+
+        private readonly int MillisTimeout;
 
         public EndPointConnectionManager(IEndpoint[] endpoints, EndPointWorkItemProcessor processor, int millisTimeout)
         {
@@ -19,7 +20,7 @@ namespace OpenFL.Cloud.Core
             Processor = processor;
             MillisTimeout = millisTimeout;
         }
-        
+
         public override void Loop()
         {
             HttpListener listener = new HttpListener();
@@ -28,7 +29,7 @@ namespace OpenFL.Cloud.Core
             listener.Start();
             while (!ExitRequested)
             {
-                IAsyncResult contextResult = listener.BeginGetContext(ar => {}, null);
+                IAsyncResult contextResult = listener.BeginGetContext(ar => { }, null);
                 while (!contextResult.IsCompleted)
                 {
                     Thread.Sleep(MillisTimeout);
@@ -40,16 +41,22 @@ namespace OpenFL.Cloud.Core
                     Endpoints.FirstOrDefault(x => x.EndpointName == context.Request.Url.Segments.Last());
                 if (endpoint == null)
                 {
-                    EndpointWorkItem.Serve(context.Response, "text/html", Encoding.UTF8.GetBytes($"Endpoint '{context.Request.Url.Segments.Last()}' does not exist."));
+                    EndpointWorkItem.Serve(
+                                           context.Response,
+                                           "text/html",
+                                           Encoding.UTF8.GetBytes(
+                                                                  $"Endpoint '{context.Request.Url.Segments.Last()}' does not exist."
+                                                                 )
+                                          );
                     continue;
                 }
 
                 EndpointWorkItem workItem = endpoint.GetItem(context);
-                
+
                 Processor.Enqueue((endpoint, workItem));
             }
-            listener.Stop();
 
+            listener.Stop();
         }
 
     }

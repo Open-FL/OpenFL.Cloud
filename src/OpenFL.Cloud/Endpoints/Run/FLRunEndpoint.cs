@@ -54,13 +54,11 @@ namespace OpenFL.Cloud.Endpoints.Run
                 bmp.Dispose();
 
 
-                item.Serve( "image/webp", ms.GetBuffer());
-                
-
+                item.Serve("image/webp", ms.GetBuffer());
             }
             catch (Exception e)
             {
-                item.Serve( "text/html", Encoding.UTF8.GetBytes(e.ToString()));
+                item.Serve("text/html", Encoding.UTF8.GetBytes(e.ToString()));
             }
         }
 

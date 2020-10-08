@@ -6,13 +6,16 @@ namespace OpenFL.Cloud.Core
 {
     public abstract class EndpointWorkItem
     {
+
         public abstract HttpListenerContext Context { get; }
+
         public abstract bool CheckValid(out string error);
 
-        public void Serve( string contentType, byte[] content)
+        public void Serve(string contentType, byte[] content)
         {
             Serve(Context.Response, contentType, content);
         }
+
         public static void Serve(HttpListenerResponse response, string contentType, byte[] content)
         {
             try
@@ -28,7 +31,6 @@ namespace OpenFL.Cloud.Core
                 Console.WriteLine(e);
             }
         }
-
 
     }
 }

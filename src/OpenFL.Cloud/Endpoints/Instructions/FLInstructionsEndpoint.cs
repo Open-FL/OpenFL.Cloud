@@ -1,7 +1,5 @@
-﻿
-
+﻿using System.Linq;
 using System.Net;
-using System.Linq;
 using System.Text;
 
 using OpenFL.Cloud.Core;
@@ -37,8 +35,6 @@ namespace OpenFL.Cloud.Endpoints.Instructions
     public class FLInstructionsEndpoint : Endpoint<FLInstructionsEndpointWorkItem>
     {
 
-        public override string EndpointName => "instructions";
-
         private readonly string Embedding;
         private readonly string GlobalEmbedding;
 
@@ -47,6 +43,8 @@ namespace OpenFL.Cloud.Endpoints.Instructions
             Embedding = embedding;
             GlobalEmbedding = globalEmbedding;
         }
+
+        public override string EndpointName => "instructions";
 
         public override FLInstructionsEndpointWorkItem GetItem(HttpListenerContext context)
         {
@@ -69,7 +67,10 @@ namespace OpenFL.Cloud.Endpoints.Instructions
             for (int i = 0; i < CloudService.Container.InstructionSet.CreatorCount; i++)
             {
                 FLInstructionCreator creator = CloudService.Container.InstructionSet.GetCreatorAt(i);
-                if (creator.InstructionKeys.Contains(name)) return creator;
+                if (creator.InstructionKeys.Contains(name))
+                {
+                    return creator;
+                }
             }
 
             return null;
@@ -82,15 +83,13 @@ namespace OpenFL.Cloud.Endpoints.Instructions
             {
                 return string.Format(Embedding, name);
             }
-            else
-            {
-                return string.Format(
-                                     Embedding,
-                                     name,
-                                     creator.GetArgumentSignatureForInstruction(name),
-                                     creator.GetDescriptionForInstruction(name)
-                                    );
-            }
+
+            return string.Format(
+                                 Embedding,
+                                 name,
+                                 creator.GetArgumentSignatureForInstruction(name),
+                                 creator.GetDescriptionForInstruction(name)
+                                );
         }
 
     }

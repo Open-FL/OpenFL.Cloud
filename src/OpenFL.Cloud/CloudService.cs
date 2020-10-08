@@ -32,25 +32,32 @@ namespace OpenFL.Cloud
 {
     public static class CloudService
     {
+
         private static readonly PluginHost Host = new PluginHost();
 
         private static readonly ADLLogger<LogType> Logger = new ADLLogger<LogType>(OpenFLDebugConfig.Settings, "Cloud");
-        
+
         private static bool NoDialogs;
-        public static event Action CustomStartupActions;
 
         public static string HostName { get; private set; }
+
         public static FLDataContainer Container { get; private set; }
+
+        public static event Action CustomStartupActions;
 
 
         public static void StartService(string hostname = "localhost:8080")
         {
             Debug.OnConfigCreate += Debug_OnConfigCreate;
             HostName = hostname;
-            
+
             InitializeFL(true, FLProgramCheckType.All);
-            
-            IEndpoint[] endpoints = new IEndpoint[]{new FLRunEndpoint(), new FLInstructionsEndpoint("<ol>{0}</ol>", "<li><h3>{0} {1}</h3><div id={0}_desc>{2}</div></li>") };
+
+            IEndpoint[] endpoints =
+            {
+                new FLRunEndpoint(),
+                new FLInstructionsEndpoint("<ol>{0}</ol>", "<li><h3>{0} {1}</h3><div id={0}_desc>{2}</div></li>")
+            };
             EndPointWorkItemProcessor processor = new EndPointWorkItemProcessor(1000);
             EndPointConnectionManager manager = new EndPointConnectionManager(endpoints, processor, 1000);
 
@@ -92,7 +99,12 @@ namespace OpenFL.Cloud
             SetProgress("Initializing FL", 0, 5, maxTasks);
             Container = InitializeCLKernels("resources/kernel");
 
-            FLProgramCheckBuilder builder = FLProgramCheckBuilder.CreateDefaultCheckBuilder(Container.InstructionSet, Container.BufferCreator, checkType);
+            FLProgramCheckBuilder builder =
+                FLProgramCheckBuilder.CreateDefaultCheckBuilder(
+                                                                Container.InstructionSet,
+                                                                Container.BufferCreator,
+                                                                checkType
+                                                               );
             Container.SetCheckBuilder(builder);
 
             SetProgress("Finished", 0, 6, maxTasks);
@@ -167,10 +179,11 @@ namespace OpenFL.Cloud
 
                 foreach (string file in files)
                 {
-                    Logger.Log(LogType.Log,
-                        $"[{fileCount}/{files.Length}]Loading: {file} ({kernelCount})",
-                        2
-                       );
+                    Logger.Log(
+                               LogType.Log,
+                               $"[{fileCount}/{files.Length}]Loading: {file} ({kernelCount})",
+                               2
+                              );
                     try
                     {
                         CLProgram prog = dataBase.AddProgram(instance, file, false, out CLProgramBuildResult res);
@@ -215,5 +228,6 @@ namespace OpenFL.Cloud
             }
 
         }
+
     }
 }
