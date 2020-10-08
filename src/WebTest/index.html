@@ -1,51 +1,45 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Online FL Script Runner</title>
-<meta charset="utf-8"/>
-<link rel="icon" href="OpenFL.png">
-<script type="text/javascript" src="index.js"></script>
-<link href="style.css" rel="stylesheet">
-<link rel="stylesheet" media="screen and (min-width: 900px)" href="style-landscape.css">
-<link rel="stylesheet" media="screen and (max-width: 899px)" href="style-portrait.css">
+	<meta charset="UTF-8" />
+	<title>OpenFL Online</title>
+	<script src="index.js"></script>
+	<link rel="icon" href="imgs/OpenFL.png"/>
+	<link href="css/style.css" rel="stylesheet" type="text/css">
 </head>
-<body onload="OnLoad()">
-	<h1>Online FL Script Runner</h1>
-	<control id="control">
-		<br>
-  			<label for="xpx">Width (px):</label>
-  			<input type="text" id="xpx" name="xpx"><br><br>
-			<label for="ypx">Height (px):</label>
-  			<input type="text" id="ypx" name="ypx"><br><br>
-			<div id="dbg"></div>
-			<button onclick="RunScript()">Build</button>
-	</control>
-	<ul>
-		<li id="main">
-			<h2> Input Script </h2>
-			<textarea id="fl-script" name="fl-script" rows="20" cols="100">
+<body onLoad="OnLoad()">
+   <header>
+           <img src="imgs/OpenFL.png" alt="">
+           <h1>OpenFL</h1>
+   </header>
+    <aside id="instructions">
+		<h1>Instructions:</h1>
+        <br>
+        <div>
+        <label for="instr_search">Search Instructions:</label>
+        <input type="text" name="instr_search" id="instr_search"></div>
+        <button id="fl-instruction-search-btn" onClick="SearchInstructions()">Search</button>
+        <br>
+		<div id="instruction-container">
+  			<iframe src="http://localhost:8080/fl-online/instructions" id="instruction-view"></iframe>
+		</div>
+	</aside>
+	<main>
+	   <h1>Input Script</h1>
+        <br>
+        <textarea id="fl-script-input">
 Main:
 	Set_v 1
 	setactive 0 1 2
-	Set_v 0
-		</textarea>
-		
-		</li>
-		<li id="side"> 
-			<h2> Output: </h2>
-			<iframe class="fl-output" id="fl-output" frameborder="0" scrolling="no"></iframe>
-		</li>
-	</ul>
-	<instrs id="instrs">
-		<h1>Instructions</h1>
-
-		<label for="search_instr">Search:</label>
-  		<input type="text" id="search_instr" name="search_instr"><br><br>
-
-		<button onclick="SearchInstructions()">Search</button>
-
-		<iframe id="instrs-view" frameborder="0" src=""></iframe>
-	</instrs>
+	Set_v 0</textarea>
+        <button id="fl-build-script-btn" onClick="RunScript()">Build Input Script</button>
+	</main>
+	<aside id="fl-build-output">
+		<h1>Output:</h1>
+        <br>
+		<figure class=".build-out-container" id="fl-build-script-output">
+		    <iframe id="fl-build-script-iframe" src=""></iframe>
+		</figure>
+	</aside>
 </body>
-</html> 
-
+</html>

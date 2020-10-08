@@ -13,13 +13,13 @@ function GetUrl(path)
 
 function OnLoad()
 {
-  let target = document.getElementById('fl-output');
+  let target = document.getElementById('fl-build-script-iframe');
   target.src = GetWebUrl('/default.html');
 
-  let instrs = document.getElementById('instrs-view');
+  let instrs = document.getElementById('instruction-view');
   instrs.src = GetUrl('/fl-online/instructions');
 
-  document.getElementById('fl-script').addEventListener('keydown', function(e) {
+  document.getElementById('fl-script-input').addEventListener('keydown', function(e) {
   if (e.key == 'Tab') {
     e.preventDefault();
     var start = this.selectionStart;
@@ -41,29 +41,28 @@ function GetParameter(name, value)
   return name.concat(encodeURIComponent(value));
 }
 
-function SetDebugQuery(target, input)
+function SetDebugQuery(input)
 {
-	let a = document.getElementById(target);
-  a.innerHTML=input;
+	console.log(input)
 }
 
 function RunScript()
 {
-  let source = document.getElementById('fl-script').value;
-  let target = document.getElementById('fl-output');
-  let width = document.getElementById('xpx').value;
-  let height = document.getElementById('ypx').value;
+  let source = document.getElementById('fl-script-input').value;
+  let target = document.getElementById('fl-build-script-iframe');
+  let width = 256;
+  let height = 256;
   
   let queryUrl = GetUrl('/fl-online/run').concat(GetParameter('?source=', source), GetParameter('&width=', width), GetParameter('&height=', height));
-  SetDebugQuery('dbg', queryUrl);
+  SetDebugQuery(queryUrl);
   target.src = queryUrl;
 }
 
 function SearchInstructions()
 {
-	let target = document.getElementById('instrs-view');
-	let query = document.getElementById('search_instr').value;
+	let target = document.getElementById('instruction-view');
+	let query = document.getElementById('instr_search').value;
 	let queryUrl = GetUrl('/fl-online/instructions').concat(GetParameter('?filter=', query));
-	SetDebugQuery('dbg', queryUrl);
+	SetDebugQuery(queryUrl);
 	target.src = queryUrl;
 }

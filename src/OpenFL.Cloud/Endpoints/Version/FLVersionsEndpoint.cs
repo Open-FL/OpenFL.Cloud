@@ -34,7 +34,7 @@ namespace OpenFL.Cloud.Endpoints.Version
         private readonly string Embedding;
         private readonly string GlobalEmbedding;
         private readonly List<AssemblyName> AssemblyNames = new List<AssemblyName>();
-        
+
 
         public FLVersionsEndpoint(string globalEmbedding, string embedding)
         {
@@ -46,7 +46,7 @@ namespace OpenFL.Cloud.Endpoints.Version
             {
                 AssemblyName name = assembly.GetName();
                 if (name.Name.StartsWith("System") ||
-                    name.Name == "mscorlib" ||
+                              name.Name == "mscorlib" ||
                     name.Name == "netstandard" ||
                     name.Name == "Accessibility")
                 {
