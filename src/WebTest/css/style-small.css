@@ -75,7 +75,7 @@ ol li {
     overflow: hidden;
     flex-wrap: wrap;
     flex-direction: row;
-    height: 256px;
+    height: 280px;
 }
 
 #fl-build-script-iframe {
