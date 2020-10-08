@@ -10,6 +10,7 @@ using OpenCL.Wrapper.TypeEnums;
 using OpenFL.Cloud.Core;
 using OpenFL.Cloud.Endpoints.Instructions;
 using OpenFL.Cloud.Endpoints.Run;
+using OpenFL.Cloud.Endpoints.Version;
 using OpenFL.Core;
 using OpenFL.Core.Buffers.BufferCreators;
 using OpenFL.Core.Instructions.InstructionCreators;
@@ -56,15 +57,35 @@ namespace OpenFL.Cloud
             IEndpoint[] endpoints =
             {
                 new FLRunEndpoint(),
-                new FLInstructionsEndpoint("<ol>{0}</ol>", "<li><h3>{0} {1}</h3><div id={0}_desc>{2}</div></li>")
+                new FLInstructionsEndpoint("<ol>{0}</ol>", "<li><h3>{0} {1}</h3><div id={0}_desc>{2}</div></li>"),
+                new FLVersionsEndpoint("<ol>{0}</ol>", "<li><h3>{0} {1}</h3><div id={0}_desc>{2}</div></li>"), 
             };
             EndPointWorkItemProcessor processor = new EndPointWorkItemProcessor(1000);
             EndPointConnectionManager manager = new EndPointConnectionManager(endpoints, processor, 1000);
 
 
             Thread consumer = new Thread(processor.Loop);
+            Thread creator = new Thread(manager.Loop);
             consumer.Start();
-            manager.Loop();
+            creator.Start();
+
+            bool exit = false;
+            while (!exit)
+            {
+                Console.WriteLine("'exit' = Exit Program");
+                string cmd = Console.ReadLine();
+                exit = cmd.ToLower() == "exit";
+            }
+
+            manager.ExitRequested = true;
+            processor.ExitRequested = true;
+
+            while (creator.IsAlive || consumer.IsAlive)
+            {
+                Thread.Sleep(1000);
+                Console.WriteLine("Waiting for Threads to Close");
+            }
+
             Debug.OnConfigCreate -= Debug_OnConfigCreate;
         }
 

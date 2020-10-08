@@ -7,6 +7,7 @@ using System.Net;
 using System.Text;
 
 using OpenFL.Cloud.Core;
+using OpenFL.Cloud.UsageStatistics;
 using OpenFL.Core;
 using OpenFL.Core.Buffers;
 using OpenFL.Core.DataObjects.ExecutableDataObjects;
@@ -53,11 +54,15 @@ namespace OpenFL.Cloud.Endpoints.Run
                 bmp.Save(ms, ImageFormat.Png);
                 bmp.Dispose();
 
+                byte[] result = ms.GetBuffer();
 
-                item.Serve("image/webp", ms.GetBuffer());
+                StatisticCollector.OnProgramBuilt(item.Source, out string outFilePath);
+                File.WriteAllBytes(outFilePath, result);
+                item.Serve("image/webp", result);
             }
             catch (Exception e)
             {
+                StatisticCollector.OnProgramFailed(item.Source, e);
                 item.Serve("text/html", Encoding.UTF8.GetBytes(e.ToString()));
             }
         }

@@ -32,8 +32,11 @@ namespace OpenFL.Cloud.Core
                 IAsyncResult contextResult = listener.BeginGetContext(ar => { }, null);
                 while (!contextResult.IsCompleted)
                 {
+                    if (ExitRequested) break;
                     Thread.Sleep(MillisTimeout);
                 }
+                
+                if (ExitRequested) break;
 
                 HttpListenerContext context = listener.EndGetContext(contextResult);
 

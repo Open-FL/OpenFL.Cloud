@@ -1,37 +1,90 @@
+
+
+* {
+  margin: 0;
+}
+
 body {
-  justify-content: center;
+  width: 100%;
 }
 
-#side {
-	width: 40%;
-  height: 75%;
+h1 {
+  margin: 20px;
+  display: block;
 }
 
-#main {
-	width: 55%;
-  height: 75%;
+h2 {
+  margin: 20px;
+  display: block;
 }
 
-iframe {
-	width: 100%;
-  	height: 75%;
+h3 {
+  margin: 20px;
+  display: block;
 }
 
-img {
-  height: auto;
-  width: auto;  
-max-width:100%;
-	max-height:100%;
+#control {
+  margin-right: 15px;
+  margin-left: 15px;
+  top: 50%;
+  left: 50%;
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+
+label {
+  display: table-cell;
+  width: 100%;
+  margin-left: 15px;
+  font-size: 20px;
+}
+
+input {
+  display: table-cell;
+  width: 100%;
+  font-size: 20px;
+}
+
+button {
+  width: 100%;
+  font-size: 20px;
+}
+
+#fl-script {
+  width: 100%;
+  height: 100%;
+}
+
+#fl-output {
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  height: 100%;
 }
 
 
 textarea {
-  	resize: none;
-	width: 100%;
-  	height: 75%;
+  resize: none;
+  height: 100%;
 }
 
-ul {
+iframe {
+  width: 100%;
+  height: 100%;
+}
+
+#instrs-view {
+  height: 1000px;
+}
+
+img {
+  max-width: 600px;
+  max-height: 600px;
+}
+
+
+@media screen and (min-width: 1400px) {
+  ul {
   list-style-type: none;
   text-align: center;
   margin: 0;
@@ -45,48 +98,46 @@ ul li {
   margin: 0;
   width: 30%;
 }
-
-img {
-  max-width:100%;
-max-height:100%;
+#main {
+  height: 600px;
+  width: 40%;
+  align-content: center;
 }
 
-#control {
-  text-align: center;
-  height: 10%;
+#side {
+  height: 600px;
+  display: inline-block;
+  width: 40%;
+}
 }
 
-#control input {
-  margin-left: 45%;
+
+@media screen and (max-width: 1399px) {
+  ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
 }
 
-#control label {
-  margin-left: 45%;
+#fl-output {
+  height: 600px;
 }
 
-#control button {
-  margin-left: 45%;
-  width: 10%;
+ul li {
+  font-size: 20px;
+  padding: 5px;
+  margin: 0;
+  width: 100%;
+}
+#main {
+  height: 600px;
+  width: 100%;
+  align-content: center;
 }
 
-#instrs {
-  text-align: center;
-  height: 10%;
+#side {
+  height: 100px;
+  display: inline-block;
+  width: 100%;
 }
-
-#instrs input {
-  margin-left: 45%;
-}
-
-#instrs label {
-  margin-left: 45%;
-}
-
-#instrs button {
-  margin-left: 45%;
-  width: 10%;
-}
-
-h1 {
-	margin-left: 20px;
 }

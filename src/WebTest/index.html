@@ -1,15 +1,24 @@
-<h1>Online FL Script Runner</h1>
+<!DOCTYPE html>
+<html>
+<head>
+<title>Online FL Script Runner</title>
+<meta charset="utf-8"/>
+<link rel="icon" href="OpenFL.png">
+<script type="text/javascript" src="index.js"></script>
 <link href="style.css" rel="stylesheet">
-<body>
+<link rel="stylesheet" media="screen and (min-width: 900px)" href="style-landscape.css">
+<link rel="stylesheet" media="screen and (max-width: 899px)" href="style-portrait.css">
+</head>
+<body onload="OnLoad()">
+	<h1>Online FL Script Runner</h1>
 	<control id="control">
-  			<label for="host">Host (hostip:port):</label>
-  			<input type="text" id="host" name="host" value="localhost:8080"><br><br>
+		<br>
   			<label for="xpx">Width (px):</label>
   			<input type="text" id="xpx" name="xpx"><br><br>
 			<label for="ypx">Height (px):</label>
   			<input type="text" id="ypx" name="ypx"><br><br>
-			<button onclick="document.getElementById('fl-output').src = 'http://'.concat(document.getElementById('host').value,'/fl-online/run?source=',encodeURIComponent(document.getElementById('fl-script').value), '&width=', encodeURIComponent(document.getElementById('xpx').value), '&height=', encodeURIComponent(document.getElementById('ypx').value))">Build</button>
-			<button onclick="document.getElementById('dbg').innerHTML = 'http://'.concat(document.getElementById('host').value,'/fl-online/run?source='.concat(encodeURIComponent(document.getElementById('fl-script').value), '&width=', encodeURIComponent(document.getElementById('xpx').value), '&height=', encodeURIComponent(document.getElementById('ypx').value))">View Query</button>
+			<div id="dbg"></div>
+			<button onclick="RunScript()">Build</button>
 	</control>
 	<ul>
 		<li id="main">
@@ -24,16 +33,19 @@ Main:
 		</li>
 		<li id="side"> 
 			<h2> Output: </h2>
-			<iframe src="http://localhost/default.html" id="fl-output"></iframe>
+			<iframe class="fl-output" id="fl-output" frameborder="0" scrolling="no"></iframe>
 		</li>
 	</ul>
 	<instrs id="instrs">
-	<h1>Instructions</h1>
-	<label for="search_instr">Search:</label>
-  	<input type="text" id="search_instr" name="search_instr"><br><br>
-	<div id="dbg"></div>
-	<button onclick="document.getElementById('instrs-view').src = 'http://'.concat(document.getElementById('host').value,'/fl-online/instructions?filter=', encodeURIComponent(document.getElementById('search_instr').value))">Search</button>
-	<button onclick="document.getElementById('dbg').innerHTML = 'http://'.concat(document.getElementById('host').value,'/fl-online/instructions?filter=', encodeURIComponent(document.getElementById('search_instr').value))">View Query</button>
-	<iframe id="instrs-view" onload="document.getElementById('instrs-view').src = 'http://'.concat(document.getElementById('host').value,'/fl-online/instructions" src="http://localhost:8080/fl-online/instructions"></iframe>
+		<h1>Instructions</h1>
+
+		<label for="search_instr">Search:</label>
+  		<input type="text" id="search_instr" name="search_instr"><br><br>
+
+		<button onclick="SearchInstructions()">Search</button>
+
+		<iframe id="instrs-view" frameborder="0" src=""></iframe>
 	</instrs>
 </body>
+</html> 
+
