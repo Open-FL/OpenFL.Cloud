@@ -1,5 +1,6 @@
 let url = '';
 let weburl = '';
+let isrunning = false;
 
 function GetWebUrl(path)
 {
@@ -74,9 +75,15 @@ function RunScript()
   let height = 256;
   
   let queryUrl = GetUrl('/fl-online/run').concat(GetParameter('?source=', source), GetParameter('&width=', width), GetParameter('&height=', height));
-  
+  ToggleBuildButton(true);
   httpGetAsync(queryUrl, handleRunResponse);
   target.innerHTML='<img id="fl-output" src="imgs/loading.gif"></img>'
+}
+
+function ToggleBuildButton(state)
+{
+  let btn = document.getElementById('fl-build-script-btn');
+  btn.disabled = state;
 }
 
 function SearchInstructions()
@@ -103,8 +110,35 @@ function handleRunResponse(response)
   }
   else{
     let result = JSON.parse(response.responseText);
-    target.innerHTML=result.message;
+    let message = result.message;
+    let errorType = result.type;
+    let stack=result.stack;
+
+    let htmlContent = '<div id="exception" style: "background: red;"><div id="exception-ex"><h3>';
+    if(errorType!= null)
+    {
+      htmlContent = htmlContent + "Run Endpoint Query Failed with: " + escapeHtml(errorType) + '</h3>';
+    }
+    else
+    {
+      htmlContent = htmlContent + "Run Endpoint Query Failed</h3>";
+    }
+
+    if(message != null)
+    {
+      htmlContent = htmlContent + '<div id="exception-message">Message:<br>' + escapeHtml(message) + '<br></div>';
+    }
+
+    if(stack != null)
+    {
+      htmlContent = htmlContent + '<div id= "exception-stack">Stacktrace:<br>' + escapeHtml(stack) + '<br></div>';
+    }
+
+    htmlContent= htmlContent + '</div></div>';
+
+    target.innerHTML=htmlContent;
   }
+  ToggleBuildButton(false);
 }
 
 function handleInstructionResponse(response)
@@ -129,3 +163,12 @@ function handleInstructionResponse(response)
 
   instrs.innerHTML=content;
 }
+
+function escapeHtml(unsafe) {
+    return unsafe
+         .replace(/&/g, "&amp;")
+         .replace(/</g, "&lt;")
+         .replace(/>/g, "&gt;")
+         .replace(/"/g, "&quot;")
+         .replace(/'/g, "&#039;");
+ }

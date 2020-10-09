@@ -16,6 +16,23 @@ namespace OpenFL.Cloud.Core
 
     }
 
+    public class ExceptionResponseObject : ErrorResponseObject
+    {
+
+        [JsonProperty("stack")]
+        public string Stacktrace;
+        [JsonProperty("type")]
+        public string Type;
+
+        public ExceptionResponseObject(Exception ex) : base(500, ex.Message)
+        {
+            Stacktrace = ex.StackTrace;
+            Type = ex.GetType().Name;
+        }
+
+
+    }
+
     public class ErrorResponseObject : ResponseObject
     {
         [JsonProperty("message")]

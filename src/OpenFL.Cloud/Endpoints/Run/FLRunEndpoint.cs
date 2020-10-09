@@ -88,26 +88,14 @@ namespace OpenFL.Cloud.Endpoints.Run
                 catch (Exception e)
                 {
                     StatisticCollector.OnProgramFailed(item.Source, e);
-                    item.Serve(new ErrorResponseObject(500, FormatException(e)));
+                    item.Serve(new ExceptionResponseObject(e));
                 }
             }
             else
             {
-                item.Serve(new ErrorResponseObject(429, FormatException(new Exception($"Rate limit exceeded. Try again in: {Math.Round((NextRateClear - DateTime.Now).TotalSeconds)} seconds"))));
+                item.Serve(new ErrorResponseObject(429, $"Rate limit exceeded. Try again in: {Math.Round((NextRateClear - DateTime.Now).TotalSeconds)} seconds"));
             }
         }
-
-        private string FormatException(Exception ex)
-        {
-            string exBlueprint = "<div id=\"exception\" style=\"background: red;\">{0}</div>";
-            return string.Format(exBlueprint, GetExceptionHtml(ex));
-        }
-
-        private string GetExceptionHtml(Exception ex)
-        {
-            return
-                $"<div id=\"exception-ex\"><h2>Endpoint '{EndpointName}' failed with exception {ex.GetType().Name}:</h2>\n<div id=\"exception-message\">Message: {ex.Message}</div>\n{(string.IsNullOrEmpty(ex.StackTrace) ? "" : $"<div id=\"exception-stack\">Stacktrace: {ex.StackTrace}</div>")}</div>"
-                    .Replace("\n", "<br>");
-        }
+        
     }
 }
