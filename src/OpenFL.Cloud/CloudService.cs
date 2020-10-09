@@ -218,15 +218,20 @@ namespace OpenFL.Cloud
 
         public static bool ShowDialog(string tag, string title, string message)
         {
-            if (CmdSettings.NoDialogs)
-            {
-                return true;
-            }
+            
 
             Logger.Log(LogType.Log, $"{title} :\n\t{message} [Y/n]", 0);
-            Console.Write(">");
-            string s = Console.ReadLine();
-            return s.ToLower() != "n";
+            
+            if (CmdSettings.NoDialogs)
+            {
+                Console.Write(">y");
+                return true;
+            }
+            else
+            {
+                string s = Console.ReadLine();
+                return s.ToLower() != "n";
+            }
         }
 
         private static void InitializeResourceSystem()
@@ -254,7 +259,7 @@ namespace OpenFL.Cloud
                                      (title, msg) => ShowDialog("[PM]", title, msg),
                                      (status, current, max) => SetProgress(status, 1, current, max),
                                      Path.Combine(PluginPaths.EntryDirectory, "static-data.sd"),
-                                     false
+                                     true
                                     );
         }
 

@@ -85,11 +85,7 @@ input {
 
 #instruction-container {
     width: 100%;
-    display: flex;
-    overflow: hidden;
-    flex-wrap: wrap;
-    flex-direction: row;
-    
+    word-wrap: normal;
     height: calc(100% - 180px);
 }
 
@@ -97,13 +93,13 @@ input {
     border: none;
     margin: 0;
     padding: 0;
-    flex-grow: 1;
 }
 
 #instruction-element{
     margin: 5px;
     padding-top: 5px;
     border-top:4px solid #1100ff;
+	word-wrap: normal;
 }
 
 #instruction-element * {

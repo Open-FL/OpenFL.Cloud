@@ -118,7 +118,7 @@ function handleInstructionResponse(response)
     let result = JSON.parse(response.responseText);
     for (var i = 0; i < result.instructions.length; i++) {
       let instritem = result.instructions[i];
-      content = content.concat('<li id="instruction-element"><h3 id="instruction-name">', instritem.name, '</h3><div>Arguments: <br>', instritem.params,'</div><div id="instruction-desc">', instritem.desc.replace(/(?:\r\n|\r|\n)/g, '<br>'), '</div></li>');
+      content = content.concat('<li id="instruction-element"><h3 id="instruction-name">', instritem.name, '</h3><div>Argument Types: ', instritem.params.replaceAll('|', ' '),'</div><div id="instruction-desc">', instritem.desc.replace(/(?:\r\n|\r|\n)/g, '<br>'), '</div></li>');
     }
     content = content.concat('</ol>')
   }
