@@ -24,7 +24,7 @@ namespace OpenFL.Cloud.Core
         public override void Loop()
         {
             HttpListener listener = new HttpListener();
-            listener.Prefixes.Add($"http://{CloudService.HostName}/fl-online/");
+            listener.Prefixes.Add($"http://{CloudService.HttpSettings.HostName}/fl-online/");
 
             listener.Start();
             while (!ExitRequested)

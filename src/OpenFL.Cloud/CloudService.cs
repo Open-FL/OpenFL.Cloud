@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net.Http.Headers;
 using System.Reflection;
 using System.Threading;
 
@@ -24,6 +25,9 @@ using PluginSystem.FileSystem;
 
 using Utility.ADL;
 using Utility.ADL.Configs;
+using Utility.CommandRunner;
+using Utility.CommandRunner.BuiltInCommands;
+using Utility.CommandRunner.BuiltInCommands.SetSettings;
 using Utility.ExtPP.Base;
 using Utility.IO.Callbacks;
 using Utility.IO.VirtualFS;
@@ -38,27 +42,86 @@ namespace OpenFL.Cloud
 
         private static readonly ADLLogger<LogType> Logger = new ADLLogger<LogType>(OpenFLDebugConfig.Settings, "Cloud");
 
-        private static bool NoDialogs;
-
-        public static string HostName { get; private set; }
+        private static bool ExecuteServer = false;
 
         public static FLDataContainer Container { get; private set; }
 
         public static event Action CustomStartupActions;
 
-
-        public static void StartService(string hostname = "localhost:8080")
+        private class CommandlineSettings
         {
-            Debug.OnConfigCreate += Debug_OnConfigCreate;
-            HostName = hostname;
 
-            InitializeFL(true, FLProgramCheckType.All);
+            public bool NoDialogs;
+
+        }
+
+        internal class HTTPSettings
+        {
+
+            public string HostName;
+            public string XOriginAllow;
+
+            public HTTPSettings()
+            {
+                HostName = "localhost:8080";
+            }
+
+        }
+        internal static HTTPSettings HttpSettings = new HTTPSettings();
+        private static CommandlineSettings CmdSettings = new CommandlineSettings();
+
+        private class RunCommand : AbstractCommand
+        {
+
+            public RunCommand() : base((info, strings) => ExecuteServer=true,new []{"--run", "-r"},"Starts the FL Server", false)
+            {
+            }
+
+        }
+
+        private static void ProcessArgs(string[] args)
+        {
+            Runner runner = new Runner();
+            
+            SetSettingsCommand cmd= new SetSettingsCommand(SetSettingsCommand.Create(
+                                                                                     new[]
+                                                                                     {
+                                                                                         SetSettingsCommand.Create("http", HttpSettings),
+                                                                                         SetSettingsCommand.Create("cli", CmdSettings)
+                                                                                     }
+                                                                                    ));
+
+            runner._AddCommand(new DefaultHelpCommand(runner, true));
+            runner._AddCommand(cmd);
+            runner._AddCommand(new RunCommand());
+            runner._AddCommand(new ListSettingsCommand(cmd));
+            runner._RunCommands(args);
+
+        }
+
+        public static void StartService(string[] args)
+        {
+
+            Debug.OnConfigCreate += Debug_OnConfigCreate;
+            Debug.DefaultInitialization();
+            ExtPPDebugConfig.Settings.MinSeverity = Verbosity.Level1;
+            CommandRunnerDebugConfig.Settings.MinSeverity=Verbosity.Level20;
+            ProcessArgs(args);
+
+            if (!ExecuteServer)
+            {
+                Console.ReadLine();
+                return;
+            }
+
+
+            InitializeFL(FLProgramCheckType.All);
 
             IEndpoint[] endpoints =
             {
                 new FLRunEndpoint(),
-                new FLInstructionsEndpoint("<ol>{0}</ol>", "<li><h3>{0} {1}</h3><div id={0}_desc>{2}</div></li>"),
-                new FLVersionsEndpoint("<ol>{0}</ol>", "<li><h3>{0} {1}</h3><div id={0}_desc>{2}</div></li>"), 
+                new FLInstructionsEndpoint("<ol id=\"instruction-list\">{0}</ol>", "<li id=instruction-element><h3 id=instruction-name>{0}</h3><div>Arguments: <br>{1}</div><div id=instruction-desc>{2}</div></li>"),
+                new FLVersionsEndpoint("<ol>{0}</ol>", "<li><h3>{0} {1}</h3><div id={0}_desc>{2}</div></li>"),
             };
             EndPointWorkItemProcessor processor = new EndPointWorkItemProcessor(1000);
             EndPointConnectionManager manager = new EndPointConnectionManager(endpoints, processor, 1000);
@@ -94,30 +157,25 @@ namespace OpenFL.Cloud
             obj.SetMinSeverity(0);
         }
 
-        public static void InitializeFL(bool noDialogs, FLProgramCheckType checkType)
+        public static void InitializeFL(FLProgramCheckType checkType)
         {
-            NoDialogs = noDialogs;
-            int maxTasks = 6;
+            int maxTasks = 5;
 
             Logger.Log(LogType.Log, "Initializing FS", 1);
             PrepareFileSystem();
 
-            SetProgress("Initializing Logging System", 0, 1, maxTasks);
-            Debug.DefaultInitialization();
-            ExtPPDebugConfig.Settings.MinSeverity = Verbosity.Level1;
-
-            SetProgress("Initializing Resource System", 0, 2, maxTasks);
+            SetProgress("Initializing Resource System", 0, 1, maxTasks);
             InitializeResourceSystem();
 
-            SetProgress("Initializing Plugin System", 0, 3, maxTasks);
+            SetProgress("Initializing Plugin System", 0, 2, maxTasks);
             InitializePluginSystem();
 
             PluginManager.LoadPlugins(Host);
 
-            SetProgress("Running Custom Actions", 0, 4, maxTasks);
+            SetProgress("Running Custom Actions", 0, 3, maxTasks);
             CustomStartupActions?.Invoke();
 
-            SetProgress("Initializing FL", 0, 5, maxTasks);
+            SetProgress("Initializing FL", 0, 4, maxTasks);
             Container = InitializeCLKernels("resources/kernel");
 
             FLProgramCheckBuilder builder =
@@ -128,7 +186,7 @@ namespace OpenFL.Cloud
                                                                );
             Container.SetCheckBuilder(builder);
 
-            SetProgress("Finished", 0, 6, maxTasks);
+            SetProgress("Finished", 0, 5, maxTasks);
         }
 
         private static void PrepareFileSystem()
@@ -138,7 +196,7 @@ namespace OpenFL.Cloud
 
         public static bool ShowDialog(string tag, string title, string message)
         {
-            if (NoDialogs)
+            if (CmdSettings.NoDialogs)
             {
                 return true;
             }

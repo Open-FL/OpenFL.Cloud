@@ -20,6 +20,10 @@ namespace OpenFL.Cloud.Core
         {
             try
             {
+                if (!string.IsNullOrEmpty(CloudService.HttpSettings.XOriginAllow))
+                {
+                    response.AddHeader("Access-Control-Allow-Origin", CloudService.HttpSettings.XOriginAllow);
+                }
                 response.ContentType = contentType;
                 response.ContentLength64 = content.Length;
                 Stream output = response.OutputStream;

@@ -58,7 +58,7 @@ namespace OpenFL.Cloud.Endpoints.Instructions
                                           CloudService.Container.InstructionSet.GetInstructionNames()
                                                       .Where(x => x.StartsWith(item.Filter))
                                                       .Select(FormatInstruction).Unpack("\n")
-                                         );
+                                         ).Replace("\n", "<br>");
             item.Serve("text/html", Encoding.UTF8.GetBytes(instrs));
         }
 

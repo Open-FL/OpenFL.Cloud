@@ -63,9 +63,20 @@ namespace OpenFL.Cloud.Endpoints.Run
             catch (Exception e)
             {
                 StatisticCollector.OnProgramFailed(item.Source, e);
-                item.Serve("text/html", Encoding.UTF8.GetBytes(e.ToString()));
+                item.Serve("text/html", Encoding.UTF8.GetBytes(FormatException(e)));
             }
         }
 
+        private string FormatException(Exception ex)
+        {
+            string exBlueprint= "<div id=\"exception\" style=\"background: red;\">{0}</div>";
+            return string.Format(exBlueprint, GetExceptionHtml(ex));
+        }
+
+        private string GetExceptionHtml(Exception ex)
+        {
+            return
+                $"<div id=\"exception-ex\"><h2>Endpoint '{EndpointName}' failed with exception {ex.GetType().Name}:</h2>\n<div id=\"exception-message\">Message: {ex.Message}</div>\n<div id=\"exception-stack\">Stacktrace: {ex.StackTrace}</div></div>".Replace("\n", "<br>");
+        }
     }
 }

@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "OpenFL.Cloud.Console": {
+      "commandName": "Project",
+      "commandLineArgs": "-ss http.XOriginAllow:* http.HostName:127.0.0.1:8080 --run"
+    }
+  }
+}

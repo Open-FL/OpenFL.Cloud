@@ -75,7 +75,7 @@ namespace OpenFL.Cloud.Endpoints.Version
                                           AssemblyNames
                                               .Where(x => x.Name.StartsWith(item.Filter)).Select(FormatAssemblyName)
                                               .Unpack("\n")
-                                         );
+                                         ).Replace("\n", "<br>");
             item.Serve("text/html", Encoding.UTF8.GetBytes(instrs));
         }
 
