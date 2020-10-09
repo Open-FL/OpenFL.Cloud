@@ -29,6 +29,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PluginSystem.Repository", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PluginSystem", "..\deps\OpenFL.Commandline\deps\OpenFL\deps\PluginSystem\src\PluginSystem\PluginSystem.csproj", "{29393710-0EDF-4B21-9A7F-4BDC94E060C2}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenFL.Commandline.Core", "..\deps\OpenFL.Commandline\src\OpenFL.Commandline.Core\OpenFL.Commandline.Core.csproj", "{73EC43B8-090A-4652-A0C7-336E5DA056C8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -75,6 +77,10 @@ Global
 		{29393710-0EDF-4B21-9A7F-4BDC94E060C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{29393710-0EDF-4B21-9A7F-4BDC94E060C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{29393710-0EDF-4B21-9A7F-4BDC94E060C2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{73EC43B8-090A-4652-A0C7-336E5DA056C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73EC43B8-090A-4652-A0C7-336E5DA056C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{73EC43B8-090A-4652-A0C7-336E5DA056C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73EC43B8-090A-4652-A0C7-336E5DA056C8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -89,6 +95,7 @@ Global
 		{DF0EFCAA-37C0-47FC-AACC-F96C589A5ABC} = {F498BD1C-2B94-45D8-89E1-1E51F65741C4}
 		{3D3D2BFB-8CEE-4D74-AC29-12E821DFAF11} = {F498BD1C-2B94-45D8-89E1-1E51F65741C4}
 		{29393710-0EDF-4B21-9A7F-4BDC94E060C2} = {2233FC46-9CEC-4D3E-8717-96E573E5BE14}
+		{73EC43B8-090A-4652-A0C7-336E5DA056C8} = {F498BD1C-2B94-45D8-89E1-1E51F65741C4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B85984FE-BD16-44C9-B580-7B072411CAD1}

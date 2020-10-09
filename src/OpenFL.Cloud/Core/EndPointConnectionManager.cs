@@ -11,20 +11,21 @@ namespace OpenFL.Cloud.Core
 
         private readonly IEndpoint[] Endpoints;
         private readonly EndPointWorkItemProcessor Processor;
-
+        private readonly HTTPSettings Settings;
         private readonly int MillisTimeout;
 
-        public EndPointConnectionManager(IEndpoint[] endpoints, EndPointWorkItemProcessor processor, int millisTimeout)
+        internal EndPointConnectionManager(HTTPSettings settings, IEndpoint[] endpoints, EndPointWorkItemProcessor processor, int millisTimeout)
         {
             Endpoints = endpoints;
             Processor = processor;
             MillisTimeout = millisTimeout;
+            Settings = settings;
         }
 
         public override void Loop()
         {
             HttpListener listener = new HttpListener();
-            listener.Prefixes.Add($"http://{CloudService.HttpSettings.HostName}/fl-online/");
+            listener.Prefixes.Add($"http://{Settings.HostName}/fl-online/");
 
             listener.Start();
             while (!ExitRequested)
@@ -44,7 +45,7 @@ namespace OpenFL.Cloud.Core
                     Endpoints.FirstOrDefault(x => x.EndpointName == context.Request.Url.Segments.Last());
                 if (endpoint == null)
                 {
-                    EndpointWorkItem.Serve(
+                    EndpointWorkItem.Serve(Settings.XOriginAllow,
                                            context.Response,
                                            new ErrorResponseObject(404, $"Endpoint '{context.Request.Url.Segments.Last()}' does not exist.")
                         );

@@ -11,8 +11,7 @@ namespace OpenFL.Cloud.Endpoints.Instructions
 {
     public class FLInstructionsEndpointWorkItem : EndpointWorkItem
     {
-
-        public FLInstructionsEndpointWorkItem(HttpListenerContext context)
+        internal FLInstructionsEndpointWorkItem(HTTPSettings settings, HttpListenerContext context): base(settings)
         {
             Context = context;
         }
@@ -35,17 +34,26 @@ namespace OpenFL.Cloud.Endpoints.Instructions
     public class FLInstructionsEndpoint : Endpoint<FLInstructionsEndpointWorkItem>
     {
 
+        private readonly FLDataContainer Container;
+        private readonly HTTPSettings Settings;
+
+        internal FLInstructionsEndpoint(FLDataContainer container, HTTPSettings settings)
+        {
+            Container = container;
+            Settings = settings;
+        }
+
         public override string EndpointName => "instructions";
 
         public override FLInstructionsEndpointWorkItem GetItem(HttpListenerContext context)
         {
-            return new FLInstructionsEndpointWorkItem(context);
+            return new FLInstructionsEndpointWorkItem(Settings, context);
         }
 
         public override void Process(FLInstructionsEndpointWorkItem item)
         {
             InstructionResponseObject iro = new InstructionResponseObject();
-            iro.Instructions = CloudService.Container.InstructionSet.GetInstructionNames()
+            iro.Instructions = Container.InstructionSet.GetInstructionNames()
                                            .Where(x => x.StartsWith(item.Filter)).Select(FormatInstruction)
                                            .ToArray();
 
@@ -54,9 +62,9 @@ namespace OpenFL.Cloud.Endpoints.Instructions
 
         private FLInstructionCreator FindCreator(string name)
         {
-            for (int i = 0; i < CloudService.Container.InstructionSet.CreatorCount; i++)
+            for (int i = 0; i < Container.InstructionSet.CreatorCount; i++)
             {
-                FLInstructionCreator creator = CloudService.Container.InstructionSet.GetCreatorAt(i);
+                FLInstructionCreator creator = Container.InstructionSet.GetCreatorAt(i);
                 if (creator.InstructionKeys.Contains(name))
                 {
                     return creator;

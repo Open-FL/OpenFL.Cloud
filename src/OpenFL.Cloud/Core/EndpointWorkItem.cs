@@ -102,22 +102,29 @@ namespace OpenFL.Cloud.Core
     public abstract class EndpointWorkItem
     {
 
+        private readonly HTTPSettings Settings;
+
+        internal EndpointWorkItem(HTTPSettings settings)
+        {
+            Settings = settings;
+        }
+
         public abstract HttpListenerContext Context { get; }
 
         public abstract bool CheckValid(out string error);
 
         public void Serve(ResponseObject content)
         {
-            Serve(Context.Response, content);
+            Serve(Settings.XOriginAllow, Context.Response, content);
         }
 
-        public static void Serve(HttpListenerResponse response, ResponseObject content)
+        public static void Serve(string xOriginAllow, HttpListenerResponse response, ResponseObject content)
         {
             try
             {
-                if (!string.IsNullOrEmpty(CloudService.HttpSettings.XOriginAllow))
+                if (!string.IsNullOrEmpty(xOriginAllow))
                 {
-                    response.AddHeader("Access-Control-Allow-Origin", CloudService.HttpSettings.XOriginAllow);
+                    response.AddHeader("Access-Control-Allow-Origin", xOriginAllow);
                 }
 
                 byte[] data = SerializeObject(content);

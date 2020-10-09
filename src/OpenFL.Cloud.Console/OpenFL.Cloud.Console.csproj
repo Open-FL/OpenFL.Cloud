@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\OpenFL.Cloud\OpenFL.Cloud.csproj" />
+    <ProjectReference Include="..\..\deps\OpenFL.Commandline\src\OpenFL.Commandline.Core\OpenFL.Commandline.Core.csproj" />
   </ItemGroup>
 
 </Project>

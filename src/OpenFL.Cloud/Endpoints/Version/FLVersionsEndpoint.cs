@@ -17,7 +17,7 @@ namespace OpenFL.Cloud.Endpoints.Version
         public HttpListenerRequest Request => Context.Request;
         public string Filter => Request.QueryString.AllKeys.Contains("filter") ? Request.QueryString.Get("filter") : "";
 
-        public FLVersionsEndpointWorkItem(HttpListenerContext context)
+        internal FLVersionsEndpointWorkItem(HTTPSettings settings, HttpListenerContext context) : base(settings)
         {
             Context = context;
         }
@@ -32,10 +32,11 @@ namespace OpenFL.Cloud.Endpoints.Version
     public class FLVersionsEndpoint : Endpoint<FLVersionsEndpointWorkItem>
     {
         private readonly List<AssemblyName> AssemblyNames = new List<AssemblyName>();
+        private readonly HTTPSettings Settings;
 
-
-        public FLVersionsEndpoint()
+        internal FLVersionsEndpoint(HTTPSettings settings)
         {
+            Settings = settings;
             List<Assembly> asm = AppDomain.CurrentDomain.GetAssemblies().ToList();
             asm.Sort((x, y) => string.Compare(x.GetName().Name, y.GetName().Name, StringComparison.Ordinal));
             foreach (Assembly assembly in asm)
@@ -56,7 +57,7 @@ namespace OpenFL.Cloud.Endpoints.Version
 
         public override FLVersionsEndpointWorkItem GetItem(HttpListenerContext context)
         {
-            return new FLVersionsEndpointWorkItem(context);
+            return new FLVersionsEndpointWorkItem(Settings, context);
         }
 
         public override void Process(FLVersionsEndpointWorkItem item)

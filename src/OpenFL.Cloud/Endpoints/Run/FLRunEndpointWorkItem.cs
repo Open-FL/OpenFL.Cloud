@@ -8,7 +8,7 @@ namespace OpenFL.Cloud.Endpoints.Run
     public class FLRunEndpointWorkItem : EndpointWorkItem
     {
 
-        public FLRunEndpointWorkItem(HttpListenerContext context)
+        internal FLRunEndpointWorkItem(HTTPSettings settings, HttpListenerContext context):base(settings)
         {
             Context = context;
         }

@@ -20,32 +20,39 @@ namespace OpenFL.Cloud.Endpoints.Run
     public class FLRunEndpoint : Endpoint<FLRunEndpointWorkItem>
     {
 
+        private readonly FLDataContainer Container;
+        private readonly FLRunSettings Settings;
+        private readonly HTTPSettings HttpSettings;
+        internal FLRunEndpoint(HTTPSettings httpSettings, FLDataContainer container, FLRunSettings settings)
+        {
+            Container = container;
+            HttpSettings = httpSettings;
+            Settings = settings;
+            NextRateClear = DateTime.Now + TimeSpan.FromSeconds(Settings.RateLimitIntervalSeconds);
+        }
+
         public override string EndpointName => "run";
 
         private Dictionary<string, int> RateLimits = new Dictionary<string, int>();
         private DateTime NextRateClear;
-
-        public FLRunEndpoint()
-        {
-            NextRateClear = DateTime.Now + TimeSpan.FromSeconds(CloudService.RunSettings.RateLimitIntervalSeconds);
-        }
+        
 
         public override FLRunEndpointWorkItem GetItem(HttpListenerContext context)
         {
-            return new FLRunEndpointWorkItem(context);
+            return new FLRunEndpointWorkItem(HttpSettings, context);
         }
 
         public override void Process(FLRunEndpointWorkItem item)
         {
             if (NextRateClear < DateTime.Now)
             {
-                NextRateClear = DateTime.Now+ TimeSpan.FromSeconds(CloudService.RunSettings.RateLimitIntervalSeconds);
+                NextRateClear = DateTime.Now+ TimeSpan.FromSeconds(Settings.RateLimitIntervalSeconds);
                 RateLimits.Clear();
             }
 
             if (!RateLimits.ContainsKey(item.Request.RemoteEndPoint.ToString()))
             {
-                RateLimits[item.Request.RemoteEndPoint.ToString()] = CloudService.RunSettings.RateLimit;
+                RateLimits[item.Request.RemoteEndPoint.ToString()] = Settings.RateLimit;
             }
 
             if (RateLimits[item.Request.RemoteEndPoint.ToString()] > 0)
@@ -54,7 +61,7 @@ namespace OpenFL.Cloud.Endpoints.Run
                 try
                 {
                     SerializableFLProgram prog =
-                        CloudService.Container.Parser.Process(
+                        Container.Parser.Process(
                                                               new FLParserInput(
                                                                                 "./memfile.fl",
                                                                                 item.Source.Split('\n')
@@ -63,13 +70,13 @@ namespace OpenFL.Cloud.Endpoints.Run
                                                                                )
                                                              );
 
-                    FLBuffer inBuffer = CloudService.Container.CreateBuffer(
+                    FLBuffer inBuffer = Container.CreateBuffer(
                                                                             int.Parse(item.Width),
                                                                             int.Parse(item.Height),
                                                                             1,
                                                                             "input_buffer"
                                                                            );
-                    FLProgram program = prog.Initialize(CloudService.Container);
+                    FLProgram program = prog.Initialize(Container);
                     program.Run(inBuffer, true);
 
                     Bitmap bmp = program.GetActiveBitmap();
