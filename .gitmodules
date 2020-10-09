@@ -1,4 +1,4 @@
-[submodule "deps/OpenFL"]
-	path = deps/OpenFL
-	url = https://github.com/Open-FL/OpenFL
+[submodule "deps/OpenFL.Commandline"]
+	path = deps/OpenFL.Commandline
+	url = https://github.com/Open-FL/OpenFL.Commandline
 	branch = master
