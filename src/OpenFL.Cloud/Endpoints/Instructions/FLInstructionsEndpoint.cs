@@ -35,15 +35,6 @@ namespace OpenFL.Cloud.Endpoints.Instructions
     public class FLInstructionsEndpoint : Endpoint<FLInstructionsEndpointWorkItem>
     {
 
-        private readonly string Embedding;
-        private readonly string GlobalEmbedding;
-
-        public FLInstructionsEndpoint(string globalEmbedding, string embedding)
-        {
-            Embedding = embedding;
-            GlobalEmbedding = globalEmbedding;
-        }
-
         public override string EndpointName => "instructions";
 
         public override FLInstructionsEndpointWorkItem GetItem(HttpListenerContext context)
@@ -53,13 +44,12 @@ namespace OpenFL.Cloud.Endpoints.Instructions
 
         public override void Process(FLInstructionsEndpointWorkItem item)
         {
-            string instrs = string.Format(
-                                          GlobalEmbedding,
-                                          CloudService.Container.InstructionSet.GetInstructionNames()
-                                                      .Where(x => x.StartsWith(item.Filter))
-                                                      .Select(FormatInstruction).Unpack("\n")
-                                         ).Replace("\n", "<br>");
-            item.Serve("text/html", Encoding.UTF8.GetBytes(instrs));
+            InstructionResponseObject iro = new InstructionResponseObject();
+            iro.Instructions = CloudService.Container.InstructionSet.GetInstructionNames()
+                                           .Where(x => x.StartsWith(item.Filter)).Select(FormatInstruction)
+                                           .ToArray();
+
+            item.Serve(iro);
         }
 
         private FLInstructionCreator FindCreator(string name)
@@ -76,20 +66,15 @@ namespace OpenFL.Cloud.Endpoints.Instructions
             return null;
         }
 
-        private string FormatInstruction(string name)
+        private InstructionObject FormatInstruction(string name)
         {
             FLInstructionCreator creator = FindCreator(name);
             if (creator == null)
             {
-                return string.Format(Embedding, name);
+                return new InstructionObject(){Name = name, Description = "unknown", Parameters = ""};
             }
 
-            return string.Format(
-                                 Embedding,
-                                 name,
-                                 creator.GetArgumentSignatureForInstruction(name),
-                                 creator.GetDescriptionForInstruction(name)
-                                );
+            return new InstructionObject() {Name = name, Description = creator.GetDescriptionForInstruction(name), Parameters = creator.GetArgumentSignatureForInstruction(name)};
         }
 
     }

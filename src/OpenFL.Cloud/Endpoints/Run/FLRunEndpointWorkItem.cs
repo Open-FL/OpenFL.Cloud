@@ -31,11 +31,6 @@ namespace OpenFL.Cloud.Endpoints.Run
 
         public override bool CheckValid(out string error)
         {
-            if (Request.AcceptTypes == null || !Request.AcceptTypes.Contains("image/webp"))
-            {
-                error = "Browser does not support content type: 'image/webp'";
-                return false;
-            }
 
             if (string.IsNullOrEmpty(Source))
             {

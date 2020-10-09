@@ -36,7 +36,7 @@ namespace OpenFL.Cloud.Core
                 }
                 else
                 {
-                    result.Item2.Serve("text/html", Encoding.UTF8.GetBytes(error));
+                    result.Item2.Serve(new ErrorResponseObject(400, error));
                 }
             }
         }

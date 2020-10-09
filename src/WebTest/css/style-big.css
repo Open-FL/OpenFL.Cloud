@@ -1,18 +1,5 @@
 @media screen and (min-width: 1487px) {
 
-html{
-    width:100%;
-    height: 100%;
-    background-color: #696969;
-}
-
-
-body{
-    width:100%;
-    height: 100%;
-    font-family: sans-serif;
-}
-
 #fl-build-output {
     width: 20%;
     height: calc(100% - 100px);
@@ -30,60 +17,13 @@ body{
 }
 
 main{
-    padding:1%;
     width: 40%;
     height: calc(100% - 100px);
     float:left;
 }
 
-
-#fl-script-input {
-    resize: vertical;
-    width: 100%;
-    height: calc(100% - 180px);
-    border:4px solid #444444;
-    min-height: 100px;
-}
-
-
-#instruction-view {
-    border: none;
-    margin: 0;
-    padding: 0;
-    flex-grow: 1;
-}
-
-#fl-build-script-iframe {
-    border: none;
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: calc(100% - 100px);
-    flex-grow: 1;
-}
-
-#instruction-container {
-    width: 100%;
-    display: flex;
-    overflow: hidden;
-    flex-wrap: wrap;
-    flex-direction: row;
-    
-    height: calc(100% - 180px);
-}
-
 #fl-build-script-output {
-    width: 100%;
-    display: flex;
-    overflow: hidden;
-    flex-wrap: wrap;
-    flex-direction: row;
     height: calc(100% - 100px);
-}
-
-#fl-build-script-btn {
-    width: 100%;
-    height: 80px;
 }
 
 #fl-instruction-search-btn {
@@ -91,28 +31,4 @@ main{
     height: 50px;
 }
 
-input {
-    width: 100%;
-    height: 30px;
-    font-size: 20px;
-}
-
-header{
-    position: relative;
-    background-color: black;
-    text-align: left;
-    padding-left:30px;
-    border-bottom:4px solid #1100ff;
-}
-
-
-header img{
-    height:100px;
-    vertical-align: middle;
-}
-
-header h1 {
-    display: inline-block;
-    vertical-align: middle;
-}
 }

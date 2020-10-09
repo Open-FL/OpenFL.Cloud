@@ -1,9 +1,87 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Text;
+
+using Newtonsoft.Json;
 
 namespace OpenFL.Cloud.Core
 {
+    public abstract class ResponseObject
+    {
+
+        [JsonIgnore]
+        public abstract int ResponseCode { get; }
+
+    }
+
+    public class ErrorResponseObject : ResponseObject
+    {
+        [JsonProperty("message")]
+        public string Message;
+
+        public override int ResponseCode { get; }
+
+        public ErrorResponseObject(int responseCode, string message)
+        {
+            Message = message;
+            ResponseCode = responseCode;
+        }
+
+    }
+
+    public class InstructionObject
+    {
+        [JsonProperty("name")]
+        public string Name;
+        [JsonProperty("params")]
+        public string Parameters;
+        [JsonProperty("desc")]
+        public string Description;
+
+    }
+
+    public class InstructionResponseObject : ResponseObject
+    {
+
+        public override int ResponseCode => 200;
+
+        [JsonProperty("instructions")]
+        public InstructionObject[] Instructions;
+
+    }
+
+    public class RunResponseObject : ResponseObject
+    {
+
+        public override int ResponseCode => 200;
+
+        [JsonProperty("result")]
+        public string OutputData64;
+
+    }
+
+    public class LibVersion
+    {
+
+        [JsonProperty("name")]
+        public string Name;
+        [JsonProperty("version")]
+        public string Version;
+
+    }
+
+    public class VersionResponseObject : ResponseObject
+    {
+
+        public override int ResponseCode => 200;
+
+        [JsonProperty("libs")]
+        public LibVersion[] Libs;
+
+    }
+
     public abstract class EndpointWorkItem
     {
 
@@ -11,12 +89,12 @@ namespace OpenFL.Cloud.Core
 
         public abstract bool CheckValid(out string error);
 
-        public void Serve(string contentType, byte[] content)
+        public void Serve(ResponseObject content)
         {
-            Serve(Context.Response, contentType, content);
+            Serve(Context.Response, content);
         }
 
-        public static void Serve(HttpListenerResponse response, string contentType, byte[] content)
+        public static void Serve(HttpListenerResponse response, ResponseObject content)
         {
             try
             {
@@ -24,16 +102,34 @@ namespace OpenFL.Cloud.Core
                 {
                     response.AddHeader("Access-Control-Allow-Origin", CloudService.HttpSettings.XOriginAllow);
                 }
-                response.ContentType = contentType;
-                response.ContentLength64 = content.Length;
+
+                byte[] data = SerializeObject(content);
+
+                response.ContentType = "application/json";
+                response.StatusCode = content.ResponseCode;
+                response.ContentLength64 = data.Length;
                 Stream output = response.OutputStream;
-                output.Write(content, 0, content.Length);
+                output.Write(data, 0, data.Length);
                 output.Close();
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
             }
+        }
+
+        private static byte[] SerializeObject(ResponseObject obj)
+        {
+            string value = "internal_error";
+            try
+            {
+                value= JsonConvert.SerializeObject(obj);
+            }
+            catch (Exception)
+            {
+            }
+
+            return Encoding.UTF8.GetBytes(value);
         }
 
     }

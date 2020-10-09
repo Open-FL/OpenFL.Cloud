@@ -4,6 +4,7 @@ using System.IO;
 using System.Net.Http.Headers;
 using System.Reflection;
 using System.Threading;
+using System.Threading.Tasks;
 
 using OpenCL.Wrapper;
 using OpenCL.Wrapper.TypeEnums;
@@ -55,6 +56,12 @@ namespace OpenFL.Cloud
 
         }
 
+        internal class FLRunSettings
+        {
+            public int RateLimit = 10;
+            public int RateLimitIntervalSeconds = 600;
+        }
+
         internal class HTTPSettings
         {
 
@@ -67,13 +74,15 @@ namespace OpenFL.Cloud
             }
 
         }
+
+        internal static FLRunSettings RunSettings=new FLRunSettings();
         internal static HTTPSettings HttpSettings = new HTTPSettings();
         private static CommandlineSettings CmdSettings = new CommandlineSettings();
 
         private class RunCommand : AbstractCommand
         {
 
-            public RunCommand() : base((info, strings) => ExecuteServer=true,new []{"--run", "-r"},"Starts the FL Server", false)
+            public RunCommand() : base((info, strings) => ExecuteServer = true, new[] { "--run", "-r" }, "Starts the FL Server", false)
             {
             }
 
@@ -82,12 +91,13 @@ namespace OpenFL.Cloud
         private static void ProcessArgs(string[] args)
         {
             Runner runner = new Runner();
-            
-            SetSettingsCommand cmd= new SetSettingsCommand(SetSettingsCommand.Create(
+
+            SetSettingsCommand cmd = new SetSettingsCommand(SetSettingsCommand.Create(
                                                                                      new[]
                                                                                      {
                                                                                          SetSettingsCommand.Create("http", HttpSettings),
-                                                                                         SetSettingsCommand.Create("cli", CmdSettings)
+                                                                                         SetSettingsCommand.Create("cli", CmdSettings),
+                                                                                         SetSettingsCommand.Create("run", RunSettings)
                                                                                      }
                                                                                     ));
 
@@ -105,7 +115,7 @@ namespace OpenFL.Cloud
             Debug.OnConfigCreate += Debug_OnConfigCreate;
             Debug.DefaultInitialization();
             ExtPPDebugConfig.Settings.MinSeverity = Verbosity.Level1;
-            CommandRunnerDebugConfig.Settings.MinSeverity=Verbosity.Level20;
+            CommandRunnerDebugConfig.Settings.MinSeverity = Verbosity.Level20;
             ProcessArgs(args);
 
             if (!ExecuteServer)
@@ -120,15 +130,27 @@ namespace OpenFL.Cloud
             IEndpoint[] endpoints =
             {
                 new FLRunEndpoint(),
-                new FLInstructionsEndpoint("<ol id=\"instruction-list\">{0}</ol>", "<li id=instruction-element><h3 id=instruction-name>{0}</h3><div>Arguments: <br>{1}</div><div id=instruction-desc>{2}</div></li>"),
-                new FLVersionsEndpoint("<ol>{0}</ol>", "<li><h3>{0} {1}</h3><div id={0}_desc>{2}</div></li>"),
+                new FLInstructionsEndpoint(),
+                new FLVersionsEndpoint(), 
+                //new FLInstructionsEndpoint("<ol id=\"instruction-list\">{0}</ol>", "<li id=instruction-element><h3 id=instruction-name>{0}</h3><div>Arguments: <br>{1}</div><div id=instruction-desc>{2}</div></li>"),
+                //new FLVersionsEndpoint("<ol>{0}</ol>", "<li><h3>{0} {1}</h3><div id={0}_desc>{2}</div></li>"),
             };
             EndPointWorkItemProcessor processor = new EndPointWorkItemProcessor(1000);
             EndPointConnectionManager manager = new EndPointConnectionManager(endpoints, processor, 1000);
 
 
-            Thread consumer = new Thread(processor.Loop);
-            Thread creator = new Thread(manager.Loop);
+            Task consumer = new Task(processor.Loop);
+            Task creator = new Task(manager.Loop);
+            Action<Task, object> errorCheck = (t, o) =>
+                                      {
+                                          if (t.IsFaulted)
+                                          {
+                                              Console.WriteLine($"Task '{o}' Cancelled with Error: {t.Exception}");
+                                          }
+                                      };
+            consumer.ContinueWith(errorCheck, "End Point Processor");
+            creator.ContinueWith(errorCheck, "HTTP Connection Manager");
+
             consumer.Start();
             creator.Start();
 
@@ -143,7 +165,7 @@ namespace OpenFL.Cloud
             manager.ExitRequested = true;
             processor.ExitRequested = true;
 
-            while (creator.IsAlive || consumer.IsAlive)
+            while (!creator.IsCompleted || !consumer.IsCompleted)
             {
                 Thread.Sleep(1000);
                 Console.WriteLine("Waiting for Threads to Close");

@@ -2,14 +2,115 @@
 	margin: 0;
 	padding: 0;
     box-sizing: border-box;
+    background: #181a1b;
+    color: white;
+}
+
+html{
+    width:100%;
+    height: 100%;
+}
+
+body{
+    width:100%;
+    height: 100%;
+    font-family: sans-serif;
+}
+
+main {
+    padding: 1%;
+}
+
+header{
+    position: relative;
+    background-color: black;
+    text-align: left;
+    padding-left:30px;
+    border-bottom:4px solid #1100ff;
+}
+
+
+header img{
+    height:100px;
+    vertical-align: middle;
+    background: #000000;
+}
+
+header h1 {
+    display: inline-block;
+    vertical-align: middle;
+    background: #000000;
+}
+
+textarea {    
+    background: #202020;
+}
+
+button {
+    background: #202020;
+}
+
+#fl-build-script-output {
+    width: 100%;
+    display: flex;
+    overflow: hidden;
+    flex-wrap: wrap;
+    flex-direction: row;
+}
+
+#fl-build-script-btn {
+    width: 100%;
+    height: 80px;
+}
+
+input {
+    width: 100%;
+    height: 30px;
+    font-size: 20px;
+}
+
+#fl-instruction-search-btn {
+    width: 100%;
+    height: 50px;
+}
+
+
+#fl-script-input {
+    resize: vertical;
+    width: 100%;
+    height: calc(100% - 180px);
+    border:4px solid #444444;
+    min-height: 100px;
+}
+
+#instruction-container {
+    width: 100%;
+    display: flex;
+    overflow: hidden;
+    flex-wrap: wrap;
+    flex-direction: row;
+    
+    height: calc(100% - 180px);
+}
+
+#instruction-view {
+    border: none;
+    margin: 0;
+    padding: 0;
+    flex-grow: 1;
 }
 
 #instruction-element{
-    background: #2d2d2d;
     margin: 5px;
     padding-top: 5px;
     border-top:4px solid #1100ff;
 }
+
+#instruction-element * {
+    background: #202020;
+}
+
+
 
 #instruction-list {
     list-style-type: none;

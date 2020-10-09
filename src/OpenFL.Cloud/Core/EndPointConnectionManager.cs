@@ -46,11 +46,8 @@ namespace OpenFL.Cloud.Core
                 {
                     EndpointWorkItem.Serve(
                                            context.Response,
-                                           "text/html",
-                                           Encoding.UTF8.GetBytes(
-                                                                  $"Endpoint '{context.Request.Url.Segments.Last()}' does not exist."
-                                                                 )
-                                          );
+                                           new ErrorResponseObject(404, $"Endpoint '{context.Request.Url.Segments.Last()}' does not exist.")
+                        );
                     continue;
                 }
 

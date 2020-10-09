@@ -31,15 +31,11 @@ namespace OpenFL.Cloud.Endpoints.Version
 
     public class FLVersionsEndpoint : Endpoint<FLVersionsEndpointWorkItem>
     {
-        private readonly string Embedding;
-        private readonly string GlobalEmbedding;
         private readonly List<AssemblyName> AssemblyNames = new List<AssemblyName>();
 
 
-        public FLVersionsEndpoint(string globalEmbedding, string embedding)
+        public FLVersionsEndpoint()
         {
-            Embedding = embedding;
-            GlobalEmbedding = globalEmbedding;
             List<Assembly> asm = AppDomain.CurrentDomain.GetAssemblies().ToList();
             asm.Sort((x, y) => string.Compare(x.GetName().Name, y.GetName().Name, StringComparison.Ordinal));
             foreach (Assembly assembly in asm)
@@ -63,20 +59,19 @@ namespace OpenFL.Cloud.Endpoints.Version
             return new FLVersionsEndpointWorkItem(context);
         }
 
-        private string FormatAssemblyName(AssemblyName name)
-        {
-            return string.Format(Embedding, name.Name, name.Version, name.CodeBase);
-        }
-
         public override void Process(FLVersionsEndpointWorkItem item)
         {
-            string instrs = string.Format(
-                                          GlobalEmbedding,
-                                          AssemblyNames
-                                              .Where(x => x.Name.StartsWith(item.Filter)).Select(FormatAssemblyName)
-                                              .Unpack("\n")
-                                         ).Replace("\n", "<br>");
-            item.Serve("text/html", Encoding.UTF8.GetBytes(instrs));
+            VersionResponseObject vro = new VersionResponseObject();
+            vro.Libs = AssemblyNames.Where(x => x.Name.StartsWith(item.Filter))
+                                    .Select(
+                                            x => new LibVersion()
+                                                 {
+                                                     Name = x.Name,
+                                                     Version = x.Version.ToString()
+                                                 }
+                                           ).ToArray();
+
+            item.Serve(vro);
         }
 
     }
