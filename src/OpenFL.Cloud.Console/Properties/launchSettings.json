@@ -2,7 +2,7 @@
   "profiles": {
     "OpenFL.Cloud.Console": {
       "commandName": "Project",
-      "commandLineArgs": "cloud --help -ss run.RateLimitIntervalSeconds:60 run.RateLimit:5 http.XOriginAllow:* --run"
+      "commandLineArgs": "cloud -ls"
     }
   }
 }

@@ -47,11 +47,6 @@ namespace OpenFL.Cloud
 
         protected override void DoRun(string[] args)
         {
-            if (!ExecuteServer)
-            {
-                Console.ReadLine();
-                return;
-            }
             IEndpoint[] endpoints =
             {
                 new FLRunEndpoint(HttpSettings, FLData.Container, RunSettings),
@@ -98,30 +93,31 @@ namespace OpenFL.Cloud
 
         }
 
+        internal void ClearAbortFlag()
+        {
+            AbortRun = false;
+        }
+
         protected override void AddCommands(Runner runner)
         {
             SetSettingsCommand cmd = new SetSettingsCommand(SetSettingsCommand.Create(
                                                                                       new[]
                                                                                       {
                                                                                           SetSettingsCommand.Create("http", HttpSettings),
-                                                                                          SetSettingsCommand.Create("cli", CmdSettings),
                                                                                           SetSettingsCommand.Create("run", RunSettings)
                                                                                       }
                                                                                      ));
-
+            AbortRun = true;
             runner._AddCommand(new DefaultHelpCommand(runner, true));
             runner._AddCommand(cmd);
             runner._AddCommand(new RunCommand(this));
             runner._AddCommand(new ListSettingsCommand(cmd));
         }
 
-        internal  bool ExecuteServer = false;
 
-       
 
         internal  FLRunSettings RunSettings = new FLRunSettings();
         internal  HTTPSettings HttpSettings = new HTTPSettings();
-        private  CommandlineSettings CmdSettings = new CommandlineSettings();
         
 
     }
