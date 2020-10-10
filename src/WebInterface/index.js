@@ -1,6 +1,13 @@
 let url = '';
 let weburl = '';
 let isrunning = false;
+let examplesFile = 'example_links.txt';
+let examples = {};
+
+function GetExamplesUrl()
+{
+  return weburl + "/" + examplesFile;
+}
 
 function GetWebUrl(path)
 {
@@ -30,14 +37,51 @@ function GetUrl(path)
   return url.concat(path);
 }
 
+function LoadExamplesList()
+{
+  if(examplesFile != '')
+  {
+    var exampleDD = document.getElementById('examples');
+    var list = httpGet(GetExamplesUrl()).responseText.match(/[^\r\n]+/g);;
+    for (var i = 0; i < list.length; i++) 
+    {
+      if(list[i] == '')
+      {
+        continue;
+      }
+      var name = GetFileName(list[i]);
+      examples[name] = list[i];
+      exampleDD.innerHTML = exampleDD.innerHTML + '<option value="'+name+'">'+name+'</option>';
+    }
+  }
+}
+
+function LoadExample()
+{
+  var exampleDD = document.getElementById('examples');
+  var key = exampleDD.options[exampleDD.selectedIndex].value;
+  var text = httpGet(examples[key]).responseText;
+  var input = document.getElementById('fl-script-input');
+  input.value = escapeHtml(text);
+}
+
+function GetFileName(str)
+{
+  return str.split('\\').pop().split('/').pop();
+}
+
 function OnLoad()
 {
 
   url = httpGet('endpoint_url.txt').responseText;
   weburl = httpGet('web_url.txt').responseText;
 
+
   console.log("Web URL: ".concat(weburl));
   console.log("API URL: ".concat(url));
+
+
+  LoadExamplesList();
 
   let target = document.getElementById('fl-build-script');
   target.innerHTML = '<img id="fl-output" src="imgs/OpenFL.png"></img>';

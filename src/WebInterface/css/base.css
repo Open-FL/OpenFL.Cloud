@@ -50,6 +50,16 @@ button {
     background: #202020;
 }
 
+#load-example-button {
+    float: left;
+    width: 100%;
+}
+
+#examples {
+    display: block;
+    width: 100%;
+}
+
 #fl-build-script-output {
     width: 100%;
     display: flex;

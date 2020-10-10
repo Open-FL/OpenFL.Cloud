@@ -1,0 +1,4 @@
+https://raw.githubusercontent.com/Open-FL/OpenFL.Examples/master/src/OpenFL.Examples/examples/logo/fl_logo.fl
+https://raw.githubusercontent.com/Open-FL/OpenFL.Examples/master/src/OpenFL.Examples/examples/misc/steelie_tire_example.fl
+https://raw.githubusercontent.com/Open-FL/OpenFL.Examples/master/src/OpenFL.Examples/examples/tests/tests/cursed_orange.fl
+https://raw.githubusercontent.com/Open-FL/OpenFL.Examples/master/src/OpenFL.Examples/examples/tests/tests/tennisball.fl
