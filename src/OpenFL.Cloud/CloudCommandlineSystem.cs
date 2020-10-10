@@ -12,6 +12,7 @@ using OpenFL.Commandline.Core.Systems;
 using Utility.CommandRunner;
 using Utility.CommandRunner.BuiltInCommands;
 using Utility.CommandRunner.BuiltInCommands.SetSettings;
+using Utility.IO.VirtualFS;
 
 namespace OpenFL.Cloud
 {
@@ -27,6 +28,9 @@ namespace OpenFL.Cloud
 
         protected override void DoRun(string[] args)
         {
+            EmbeddedFileIOManager.EnableFileSystem = RunSettings.EnableFileSystem;
+            EmbeddedFileIOManager.EnableManifest = RunSettings.EnableManifest;
+
             IEndpoint[] endpoints =
             {
                 new FLRunEndpoint(HttpSettings, FLData.Container, RunSettings),

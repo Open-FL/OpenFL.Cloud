@@ -6,7 +6,7 @@
         public int RateLimit = 10;
         public int RateLimitIntervalSeconds = 600;
         public bool EnableFileSystem = true;
-        public bool EnableManifestFileSystem = true;
+        public bool EnableManifest = true;
 
     }
 }
