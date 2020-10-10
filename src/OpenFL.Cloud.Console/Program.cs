@@ -7,7 +7,11 @@ namespace OpenFL.Cloud.Console
 
         private static void Main(string[] args)
         {
-            CommandlineCore.Run(args, "https://open-fl.github.io/OpenFL.Cloud/latest/fl-cloud-server.zip", "https://open-fl.github.io/OpenFL.Cloud/latest/fl-cloud-systems.zip");
+            CommandlineCore.Run(
+                                args,
+                                "https://open-fl.github.io/OpenFL.Cloud/latest/fl-cloud-server.zip",
+                                "https://open-fl.github.io/OpenFL.Cloud/latest/fl-cloud-systems.zip"
+                               );
         }
 
     }

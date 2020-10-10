@@ -1,8 +1,8 @@
 {
-  "profiles": {
-    "OpenFL.Cloud.Console": {
-      "commandName": "Project",
-      "commandLineArgs": "cloud -ls"
+    "profiles": {
+        "OpenFL.Cloud.Console": {
+            "commandName": "Project",
+            "commandLineArgs": "cloud -ls"
+        }
     }
-  }
 }

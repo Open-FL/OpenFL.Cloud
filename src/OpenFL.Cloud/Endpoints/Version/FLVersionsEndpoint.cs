@@ -1,36 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net;
-using OpenFL.Cloud.Core;
 using System.Linq;
+using System.Net;
 using System.Reflection;
-using System.Text;
 
-using Utility.FastString;
-using Utility.TypeManagement;
+using OpenFL.Cloud.Core;
 
 namespace OpenFL.Cloud.Endpoints.Version
 {
     public class FLVersionsEndpointWorkItem : EndpointWorkItem
     {
-        public override HttpListenerContext Context { get; }
-        public HttpListenerRequest Request => Context.Request;
-        public string Filter => Request.QueryString.AllKeys.Contains("filter") ? Request.QueryString.Get("filter") : "";
 
         internal FLVersionsEndpointWorkItem(HTTPSettings settings, HttpListenerContext context) : base(settings)
         {
             Context = context;
         }
 
+        public override HttpListenerContext Context { get; }
+
+        public HttpListenerRequest Request => Context.Request;
+
+        public string Filter => Request.QueryString.AllKeys.Contains("filter") ? Request.QueryString.Get("filter") : "";
+
         public override bool CheckValid(out string error)
         {
             error = "No Error";
             return true;
         }
+
     }
 
     public class FLVersionsEndpoint : Endpoint<FLVersionsEndpointWorkItem>
     {
+
         private readonly List<AssemblyName> AssemblyNames = new List<AssemblyName>();
         private readonly HTTPSettings Settings;
 
@@ -43,12 +45,13 @@ namespace OpenFL.Cloud.Endpoints.Version
             {
                 AssemblyName name = assembly.GetName();
                 if (name.Name.StartsWith("System") ||
-                              name.Name == "mscorlib" ||
+                    name.Name == "mscorlib" ||
                     name.Name == "netstandard" ||
                     name.Name == "Accessibility")
                 {
                     continue;
                 }
+
                 AssemblyNames.Add(name);
             }
         }
@@ -65,7 +68,7 @@ namespace OpenFL.Cloud.Endpoints.Version
             VersionResponseObject vro = new VersionResponseObject();
             vro.Libs = AssemblyNames.Where(x => x.Name.StartsWith(item.Filter))
                                     .Select(
-                                            x => new LibVersion()
+                                            x => new LibVersion
                                                  {
                                                      Name = x.Name,
                                                      Version = x.Version.ToString()

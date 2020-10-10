@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -21,6 +20,7 @@ namespace OpenFL.Cloud.Core
 
         [JsonProperty("stack")]
         public string Stacktrace;
+
         [JsonProperty("type")]
         public string Type;
 
@@ -30,15 +30,13 @@ namespace OpenFL.Cloud.Core
             Type = ex.GetType().Name;
         }
 
-
     }
 
     public class ErrorResponseObject : ResponseObject
     {
+
         [JsonProperty("message")]
         public string Message;
-
-        public override int ResponseCode { get; }
 
         public ErrorResponseObject(int responseCode, string message)
         {
@@ -46,36 +44,41 @@ namespace OpenFL.Cloud.Core
             ResponseCode = responseCode;
         }
 
+        public override int ResponseCode { get; }
+
     }
 
     public class InstructionObject
     {
-        [JsonProperty("name")]
-        public string Name;
-        [JsonProperty("params")]
-        public string Parameters;
+
         [JsonProperty("desc")]
         public string Description;
+
+        [JsonProperty("name")]
+        public string Name;
+
+        [JsonProperty("params")]
+        public string Parameters;
 
     }
 
     public class InstructionResponseObject : ResponseObject
     {
 
-        public override int ResponseCode => 200;
-
         [JsonProperty("instructions")]
         public InstructionObject[] Instructions;
+
+        public override int ResponseCode => 200;
 
     }
 
     public class RunResponseObject : ResponseObject
     {
 
-        public override int ResponseCode => 200;
-
         [JsonProperty("result")]
         public string OutputData64;
+
+        public override int ResponseCode => 200;
 
     }
 
@@ -84,6 +87,7 @@ namespace OpenFL.Cloud.Core
 
         [JsonProperty("name")]
         public string Name;
+
         [JsonProperty("version")]
         public string Version;
 
@@ -92,10 +96,10 @@ namespace OpenFL.Cloud.Core
     public class VersionResponseObject : ResponseObject
     {
 
-        public override int ResponseCode => 200;
-
         [JsonProperty("libs")]
         public LibVersion[] Libs;
+
+        public override int ResponseCode => 200;
 
     }
 
@@ -147,7 +151,7 @@ namespace OpenFL.Cloud.Core
             string value = "internal_error";
             try
             {
-                value= JsonConvert.SerializeObject(obj);
+                value = JsonConvert.SerializeObject(obj);
             }
             catch (Exception)
             {

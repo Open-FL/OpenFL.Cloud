@@ -5,7 +5,6 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text;
 
 using OpenFL.Cloud.Core;
 using OpenFL.Cloud.UsageStatistics;
@@ -21,8 +20,12 @@ namespace OpenFL.Cloud.Endpoints.Run
     {
 
         private readonly FLDataContainer Container;
-        private readonly FLRunSettings Settings;
         private readonly HTTPSettings HttpSettings;
+        private readonly FLRunSettings Settings;
+        private DateTime NextRateClear;
+
+        private readonly Dictionary<string, int> RateLimits = new Dictionary<string, int>();
+
         internal FLRunEndpoint(HTTPSettings httpSettings, FLDataContainer container, FLRunSettings settings)
         {
             Container = container;
@@ -33,9 +36,6 @@ namespace OpenFL.Cloud.Endpoints.Run
 
         public override string EndpointName => "run";
 
-        private Dictionary<string, int> RateLimits = new Dictionary<string, int>();
-        private DateTime NextRateClear;
-        
 
         public override FLRunEndpointWorkItem GetItem(HttpListenerContext context)
         {
@@ -46,7 +46,7 @@ namespace OpenFL.Cloud.Endpoints.Run
         {
             if (NextRateClear < DateTime.Now)
             {
-                NextRateClear = DateTime.Now+ TimeSpan.FromSeconds(Settings.RateLimitIntervalSeconds);
+                NextRateClear = DateTime.Now + TimeSpan.FromSeconds(Settings.RateLimitIntervalSeconds);
                 RateLimits.Clear();
             }
 
@@ -62,20 +62,20 @@ namespace OpenFL.Cloud.Endpoints.Run
                 {
                     SerializableFLProgram prog =
                         Container.Parser.Process(
-                                                              new FLParserInput(
-                                                                                "./memfile.fl",
-                                                                                item.Source.Split('\n')
-                                                                                    .Select(x => x.Trim()).ToArray(),
-                                                                                true
-                                                                               )
-                                                             );
+                                                 new FLParserInput(
+                                                                   "./memfile.fl",
+                                                                   item.Source.Split('\n')
+                                                                       .Select(x => x.Trim()).ToArray(),
+                                                                   true
+                                                                  )
+                                                );
 
                     FLBuffer inBuffer = Container.CreateBuffer(
-                                                                            int.Parse(item.Width),
-                                                                            int.Parse(item.Height),
-                                                                            1,
-                                                                            "input_buffer"
-                                                                           );
+                                                               int.Parse(item.Width),
+                                                               int.Parse(item.Height),
+                                                               1,
+                                                               "input_buffer"
+                                                              );
                     FLProgram program = prog.Initialize(Container);
                     program.Run(inBuffer, true);
 
@@ -90,7 +90,6 @@ namespace OpenFL.Cloud.Endpoints.Run
                     File.WriteAllBytes(outFilePath, result);
                     RunResponseObject rr = new RunResponseObject { OutputData64 = Convert.ToBase64String(result) };
                     item.Serve(rr);
-
                 }
                 catch (Exception e)
                 {
@@ -100,9 +99,14 @@ namespace OpenFL.Cloud.Endpoints.Run
             }
             else
             {
-                item.Serve(new ErrorResponseObject(429, $"Rate limit exceeded. Try again in: {Math.Round((NextRateClear - DateTime.Now).TotalSeconds)} seconds"));
+                item.Serve(
+                           new ErrorResponseObject(
+                                                   429,
+                                                   $"Rate limit exceeded. Try again in: {Math.Round((NextRateClear - DateTime.Now).TotalSeconds)} seconds"
+                                                  )
+                          );
             }
         }
-        
+
     }
 }

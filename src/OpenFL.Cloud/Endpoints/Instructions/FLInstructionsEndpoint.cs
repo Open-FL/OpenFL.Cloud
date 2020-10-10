@@ -1,17 +1,15 @@
 ﻿using System.Linq;
 using System.Net;
-using System.Text;
 
 using OpenFL.Cloud.Core;
 using OpenFL.Core.Instructions.InstructionCreators;
-
-using Utility.FastString;
 
 namespace OpenFL.Cloud.Endpoints.Instructions
 {
     public class FLInstructionsEndpointWorkItem : EndpointWorkItem
     {
-        internal FLInstructionsEndpointWorkItem(HTTPSettings settings, HttpListenerContext context): base(settings)
+
+        internal FLInstructionsEndpointWorkItem(HTTPSettings settings, HttpListenerContext context) : base(settings)
         {
             Context = context;
         }
@@ -54,8 +52,8 @@ namespace OpenFL.Cloud.Endpoints.Instructions
         {
             InstructionResponseObject iro = new InstructionResponseObject();
             iro.Instructions = Container.InstructionSet.GetInstructionNames()
-                                           .Where(x => x.StartsWith(item.Filter)).Select(FormatInstruction)
-                                           .ToArray();
+                                        .Where(x => x.StartsWith(item.Filter)).Select(FormatInstruction)
+                                        .ToArray();
 
             item.Serve(iro);
         }
@@ -79,10 +77,20 @@ namespace OpenFL.Cloud.Endpoints.Instructions
             FLInstructionCreator creator = FindCreator(name);
             if (creator == null)
             {
-                return new InstructionObject(){Name = name, Description = "unknown", Parameters = ""};
+                return new InstructionObject
+                       {
+                           Name = name,
+                           Description = "unknown",
+                           Parameters = ""
+                       };
             }
 
-            return new InstructionObject() {Name = name, Description = creator.GetDescriptionForInstruction(name), Parameters = creator.GetArgumentSignatureForInstruction(name)};
+            return new InstructionObject
+                   {
+                       Name = name,
+                       Description = creator.GetDescriptionForInstruction(name),
+                       Parameters = creator.GetArgumentSignatureForInstruction(name)
+                   };
         }
 
     }

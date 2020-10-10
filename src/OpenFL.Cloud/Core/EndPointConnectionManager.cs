@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading;
 
 namespace OpenFL.Cloud.Core
@@ -10,11 +9,12 @@ namespace OpenFL.Cloud.Core
     {
 
         private readonly IEndpoint[] Endpoints;
+        private readonly int MillisTimeout;
         private readonly EndPointWorkItemProcessor Processor;
         private readonly HTTPSettings Settings;
-        private readonly int MillisTimeout;
 
-        internal EndPointConnectionManager(HTTPSettings settings, IEndpoint[] endpoints, EndPointWorkItemProcessor processor, int millisTimeout)
+        internal EndPointConnectionManager(
+            HTTPSettings settings, IEndpoint[] endpoints, EndPointWorkItemProcessor processor, int millisTimeout)
         {
             Endpoints = endpoints;
             Processor = processor;
@@ -33,11 +33,18 @@ namespace OpenFL.Cloud.Core
                 IAsyncResult contextResult = listener.BeginGetContext(ar => { }, null);
                 while (!contextResult.IsCompleted)
                 {
-                    if (ExitRequested) break;
+                    if (ExitRequested)
+                    {
+                        break;
+                    }
+
                     Thread.Sleep(MillisTimeout);
                 }
-                
-                if (ExitRequested) break;
+
+                if (ExitRequested)
+                {
+                    break;
+                }
 
                 HttpListenerContext context = listener.EndGetContext(contextResult);
 
@@ -45,10 +52,14 @@ namespace OpenFL.Cloud.Core
                     Endpoints.FirstOrDefault(x => x.EndpointName == context.Request.Url.Segments.Last());
                 if (endpoint == null)
                 {
-                    EndpointWorkItem.Serve(Settings.XOriginAllow,
+                    EndpointWorkItem.Serve(
+                                           Settings.XOriginAllow,
                                            context.Response,
-                                           new ErrorResponseObject(404, $"Endpoint '{context.Request.Url.Segments.Last()}' does not exist.")
-                        );
+                                           new ErrorResponseObject(
+                                                                   404,
+                                                                   $"Endpoint '{context.Request.Url.Segments.Last()}' does not exist."
+                                                                  )
+                                          );
                     continue;
                 }
 

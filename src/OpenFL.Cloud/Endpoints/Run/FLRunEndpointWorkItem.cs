@@ -8,7 +8,7 @@ namespace OpenFL.Cloud.Endpoints.Run
     public class FLRunEndpointWorkItem : EndpointWorkItem
     {
 
-        internal FLRunEndpointWorkItem(HTTPSettings settings, HttpListenerContext context):base(settings)
+        internal FLRunEndpointWorkItem(HTTPSettings settings, HttpListenerContext context) : base(settings)
         {
             Context = context;
         }
@@ -31,7 +31,6 @@ namespace OpenFL.Cloud.Endpoints.Run
 
         public override bool CheckValid(out string error)
         {
-
             if (string.IsNullOrEmpty(Source))
             {
                 error = "'source' parameter is missing or empty";

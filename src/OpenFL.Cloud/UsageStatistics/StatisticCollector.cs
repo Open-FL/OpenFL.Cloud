@@ -2,18 +2,25 @@
 using System.IO;
 using System.Reflection;
 
-using PluginSystem.FileSystem;
-
 namespace OpenFL.Cloud.UsageStatistics
 {
     public static class StatisticCollector
     {
-        private static string StatRoot => Path.Combine(Path.GetDirectoryName(new Uri(Assembly.GetEntryAssembly().CodeBase).AbsolutePath), "statistics");
+
+        private static string StatRoot =>
+            Path.Combine(
+                         Path.GetDirectoryName(new Uri(Assembly.GetEntryAssembly().CodeBase).AbsolutePath),
+                         "statistics"
+                        );
 
         private static string SuccessPath => Path.Combine(StatRoot, "success");
+
         private static string ErrorPath => Path.Combine(StatRoot, "error");
 
-        private static string GetUniqueName(string extension) => DateTime.Now.ToFileTimeUtc() + extension;
+        private static string GetUniqueName(string extension)
+        {
+            return DateTime.Now.ToFileTimeUtc() + extension;
+        }
 
         private static void EnsureStructure()
         {
@@ -28,7 +35,6 @@ namespace OpenFL.Cloud.UsageStatistics
             Directory.CreateDirectory(Path.Combine(SuccessPath, name));
             outFilePath = Path.Combine(SuccessPath, name, "out.png");
             File.WriteAllText(Path.Combine(SuccessPath, name, "in.fl"), source);
-
         }
 
         public static void OnProgramFailed(string source, Exception ex)
